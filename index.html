@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Burns Notice</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Burns Notice">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#EFEAE3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171412" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#EFEAE3; --card:#FBF9F6; --ink:#2A2420; --muted:#6B5F57; --line:#DDD4C9; --soft:#4A403A;
+  --accent:#A63A2B; --accent-ink:#7E2A1F; --accent-tint:#F5E1DC; --accent-wash:#F6E9E5; --mark:#A63A2B;
+  --open:#8F4A0C; --open-tint:#F8E6D2; --open-dot:#D9822B;
+  --prog:#34507A; --prog-tint:#E1E8F0; --prog-dot:#4F6F99;
+  --done:#2F4A37; --done-tint:#E1EBE3; --urgent:#C0261F;
+  --track:#E3DCD2; --on-ink:#FFFFFF; --dash:#BFB3A6; --thumb:#E4DDD3;
+  --sans:Inter, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#171412; --card:#221E1B; --ink:#EFE9E3; --muted:#A89C92; --line:#3A332E; --soft:#CFC5BC;
+  --accent:#D2604F; --accent-ink:#F0A596; --accent-tint:#3E221C; --accent-wash:#2E1E1A; --mark:#C4523F;
+  --open:#F2B27A; --open-tint:#3A2614; --open-dot:#E8913F;
+  --prog:#A9C1E0; --prog-tint:#1F2A38; --prog-dot:#7C9CC6;
+  --done:#9CCBA8; --done-tint:#1E3024; --urgent:#FF7A6B;
+  --track:#2C2724; --on-ink:#171412; --dash:#4F4640; --thumb:#322C28; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#171412; --card:#221E1B; --ink:#EFE9E3; --muted:#A89C92; --line:#3A332E; --soft:#CFC5BC;
+  --accent:#D2604F; --accent-ink:#F0A596; --accent-tint:#3E221C; --accent-wash:#2E1E1A; --mark:#C4523F;
+  --open:#F2B27A; --open-tint:#3A2614; --open-dot:#E8913F;
+  --prog:#A9C1E0; --prog-tint:#1F2A38; --prog-dot:#7C9CC6;
+  --done:#9CCBA8; --done-tint:#1E3024; --urgent:#FF7A6B;
+  --track:#2C2724; --on-ink:#171412; --dash:#4F4640; --thumb:#322C28; color-scheme:dark}
+*{-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:var(--ground)}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-top:calc(env(safe-area-inset-top, 0px) + 16px);padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 40px)}
+.app{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-0.02em;text-wrap:balance}
+h2{margin:0;font-size:16px;font-weight:600}
+p{margin:0}
+.seg{display:grid;gap:4px;background:var(--track);padding:4px;border-radius:12px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.seg.two{grid-template-columns:1fr 1fr}
+.seg button{border:none;background:transparent;border-radius:9px;min-height:40px;font:inherit;font-size:15px;color:var(--soft);cursor:pointer;padding:0 4px}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(21,23,28,.12)}
+.sub{font-size:14px;color:var(--muted)}
+.label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.f{font-size:14px;font-weight:600}
+.err{font-size:14px;color:var(--urgent)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 2px rgba(21,23,28,.06);border:none;text-align:left;font:inherit;color:inherit;width:100%;box-sizing:border-box;min-width:0}
+button.card{cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{flex-shrink:0;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px}
+.s-open{color:var(--open);background:var(--open-tint)}
+.s-progress{color:var(--prog);background:var(--prog-tint)}
+.s-done{color:var(--done);background:var(--done-tint)}
+.urgent{font-size:13px;font-weight:600;color:var(--urgent);display:flex;align-items:center;gap:6px}
+.urgent::before{content:"";width:8px;height:8px;border-radius:4px;background:var(--urgent)}
+.primary{min-height:54px;border:none;border-radius:16px;background:var(--accent);color:var(--on-ink);font:inherit;font-size:17px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.primary:disabled,.btn-pri:disabled{opacity:.6;cursor:default}
+.btn-pri,.btn-sec,.btn-danger{min-height:44px;border-radius:12px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;padding:0 14px}
+.btn-pri{border:none;background:var(--accent);color:var(--on-ink)}
+.btn-sec{border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn-danger{border:1px solid var(--urgent);background:transparent;color:var(--urgent)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.back{align-self:flex-start;min-height:44px;border:none;background:none;color:var(--accent);font:inherit;font-size:16px;font-weight:500;cursor:pointer;padding:0;display:flex;align-items:center;gap:4px}
+.link{border:none;background:none;color:var(--accent);font:inherit;font-size:15px;font-weight:500;cursor:pointer;padding:8px 0;align-self:center}
+input[type=text],input[type=email],input[type=password],textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px 14px;font:inherit;font-size:16px;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);font:inherit;font-size:15px;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"],.day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.day{flex:0 0 auto;width:54px;min-height:60px;border-radius:14px;border:1px solid var(--line);background:var(--card);font:inherit;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.day small{font-size:12px;opacity:.75}
+.day b{font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.photo{min-height:76px;border:1.5px dashed var(--dash);border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;font-weight:500;color:var(--soft);cursor:pointer;position:relative;text-align:center;padding:0 12px}
+.photo input{position:absolute;width:1px;height:1px;opacity:0}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--card);border-radius:14px;padding:12px 14px;box-shadow:0 1px 2px rgba(21,23,28,.06)}
+.stat b{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.shops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.shops a{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.shops a:first-child{background:var(--accent);border-color:var(--accent);color:var(--on-ink)}
+.videos{min-height:44px;border-radius:12px;background:var(--accent-wash);color:var(--accent-ink);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.toast{border-radius:12px;padding:12px 14px;font-size:14px;font-weight:500}
+.toast.ok{background:var(--done-tint);color:var(--done)}
+.toast.bad{background:var(--accent-tint);color:var(--accent-ink)}
+.visit{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px;color:var(--soft)}
+.vs{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px}
+.v-wait{color:var(--open);background:var(--open-tint)}
+.v-ok{color:var(--prog);background:var(--prog-tint)}
+.picker,.techform{border-top:1px solid var(--track);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.alert{background:var(--open-tint);color:var(--open);border:none;border-radius:14px;padding:14px 16px;font:inherit;font-size:15px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;text-align:left}
+.month{display:flex;justify-content:space-between;align-items:center}
+.month h2{font-size:18px}
+.nav{width:44px;height:44px;border-radius:22px;border:none;background:var(--card);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(21,23,28,.08)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;background:var(--card);border-radius:16px;padding:10px;box-shadow:0 1px 2px rgba(21,23,28,.06)}
+.wd{font-size:12px;font-weight:600;color:var(--muted);text-align:center;padding:4px 0}
+.cd{min-height:46px;border:none;background:transparent;border-radius:10px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-variant-numeric:tabular-nums;padding:0}
+.cd.today{box-shadow:inset 0 0 0 1.5px var(--accent);font-weight:600}
+.cd[aria-pressed="true"]{background:var(--ink);color:var(--on-ink)}
+.cd.past{color:var(--muted)}
+.dots{display:flex;gap:3px;height:6px}
+.dot{width:6px;height:6px;border-radius:3px;display:inline-block}
+.d-wait{background:var(--open-dot)}
+.d-ok{background:var(--prog-dot)}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);justify-content:center;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.slot{font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.utabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px;padding:8px 5px 0 0}
+.utab{position:relative;white-space:nowrap;min-width:0;min-height:44px;padding:0 8px;justify-content:center;border-radius:999px;border:1px solid var(--line);background:var(--card);font:inherit;font-size:15px;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px}
+.utab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-ink);font-weight:600}
+.utab .n{position:absolute;top:-7px;right:-5px;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;background:var(--open-tint);color:var(--open);border:2px solid var(--ground);display:inline-flex;align-items:center;justify-content:center;padding:0 4px;box-sizing:border-box}
+.utab[aria-pressed="true"] .n{background:var(--ink);color:var(--ground)}
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{position:relative;aspect-ratio:1;max-width:100%;border:none;padding:0;border-radius:12px;overflow:hidden;background:var(--thumb);color:var(--muted);font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;cursor:pointer}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile .cap{font-size:11px;font-weight:500;padding:0 6px;line-height:1.25;overflow-wrap:anywhere}
+.vbadge{position:absolute;right:6px;bottom:6px;width:24px;height:24px;border-radius:12px;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.tech{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--soft);min-width:0}
+.tech b{font-weight:600;color:var(--ink)}
+.tech small{display:block;font-size:12px;color:var(--muted)}
+.av{width:32px;height:32px;border-radius:16px;background:var(--prog-tint);color:var(--prog);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.02em}
+.unassigned{color:var(--open);font-weight:600}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--mark);color:#FFFFFF;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-name{font-size:19px;font-weight:700;letter-spacing:-0.01em}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px}
+.who span{font-size:13px;color:var(--muted)}
+.theme{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.seg.mini{grid-template-columns:repeat(3,auto);padding:3px;border-radius:10px}
+.seg.mini button{min-height:34px;font-size:13px;padding:0 10px;display:flex;align-items:center;gap:5px}
+.viewer{position:fixed;inset:0;z-index:50;background:rgba(10,8,7,.92);display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px, env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px, env(safe-area-inset-left,0px));gap:12px}
+.viewer .vtop{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#fff}
+.viewer .vtop span{font-size:14px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewer .vclose{width:44px;height:44px;border-radius:22px;border:none;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.viewer .vbody{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+.viewer img,.viewer video{max-width:100%;max-height:100%;border-radius:10px}
+.viewer .vfoot{display:flex;justify-content:center}
+.viewer .vfoot button{min-height:44px;border-radius:12px;border:none;background:rgba(255,255,255,.14);color:#fff;font:inherit;font-weight:600;padding:0 18px;cursor:pointer}
+.loading{display:flex;justify-content:center;padding:48px 0;color:var(--muted)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg{flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M12 18c-1.9 0-3-1.2-3-2.8 0-1.5 1-2.4 1.6-3.4.2 1 .8 1.5 1.4 1.7-.1-1.4.5-2.6 1.6-3.5.1 1.5 1.4 2.4 1.4 4.3 0 2.1-1.2 3.7-3 3.7z"/></svg></span>
+    <span class="brand-name">Burns Notice</span>
+    <div class="who" id="who" hidden><span id="whoName"></span><button class="link" id="signOut" style="padding:8px 0">Sign out</button></div>
+  </div>
+
+  <div id="toast" class="toast" hidden role="status"></div>
+
+  <div class="loading" id="boot">Loading…</div>
+
+  <!-- Sign in -->
+  <section id="login" class="stack" style="gap:16px" hidden>
+    <div>
+      <p class="sub">Burns Street maintenance</p>
+      <h1>Sign in</h1>
+    </div>
+    <form id="loginForm" class="stack" style="gap:12px" novalidate>
+      <div class="stack" style="gap:8px">
+        <label class="f" for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" inputmode="email" placeholder="name@gmail.com">
+      </div>
+      <div class="stack" style="gap:8px">
+        <label class="f" for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password">
+      </div>
+      <p id="loginErr" class="err" hidden></p>
+      <button class="primary" id="loginBtn" type="submit">Sign in</button>
+    </form>
+    <button class="link" id="forgot">Forgot your password?</button>
+  </section>
+
+  <section id="noRole" class="stack" hidden>
+    <h1>Account not set up</h1>
+    <p class="sub">This account isn't linked to a unit yet. Ask the landlord to add it, then sign in again.</p>
+  </section>
+
+  <!-- Settings row (signed in) -->
+  <div class="theme" id="themeRow" hidden>
+    <span class="sub" style="font-size:13px">Appearance</span>
+    <div class="seg mini" role="group" aria-label="Appearance">
+      <button data-theme-set="auto">Auto</button>
+      <button data-theme-set="light">Light</button>
+      <button data-theme-set="dark">Dark</button>
+    </div>
+  </div>
+
+  <!-- Tenant: my requests -->
+  <section id="tHome" class="stack" style="gap:18px" hidden>
+    <div>
+      <p class="sub" id="tUnitLine"></p>
+      <h1>My requests</h1>
+    </div>
+    <button class="primary" data-act="nav" data-to="tNew">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      New request
+    </button>
+    <p class="label">Active</p>
+    <div class="stack" id="tenantActive"></div>
+    <p class="label">Completed</p>
+    <div class="stack" id="tenantDone"></div>
+  </section>
+
+  <!-- Tenant: new request -->
+  <section id="tNew" class="stack" style="gap:18px" hidden>
+    <button class="back" data-act="nav" data-to="tHome">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      My requests
+    </button>
+    <h1>New request</h1>
+    <div class="stack" style="gap:8px">
+      <label class="f" for="issue">What needs fixing?</label>
+      <input id="issue" type="text" placeholder="Bathroom sink is clogged" maxlength="120">
+      <p id="issueErr" class="err" hidden>Add a short description first.</p>
+    </div>
+    <div class="stack" style="gap:8px">
+      <p class="f">Where?</p>
+      <div class="chips" id="rooms"></div>
+    </div>
+    <div class="stack" style="gap:8px">
+      <label class="f" for="details">Details <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <textarea id="details" placeholder="When did it start? Anything you've tried?" maxlength="2000"></textarea>
+    </div>
+    <label class="photo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      <span id="photoLabel">Add photos or videos</span>
+      <input id="photo" type="file" accept="image/*,video/*" multiple>
+    </label>
+    <p id="fileErr" class="err" hidden></p>
+    <div class="stack" style="gap:8px">
+      <p class="f">How urgent?</p>
+      <div class="seg" id="urgency"></div>
+    </div>
+    <div class="stack" style="gap:8px">
+      <p class="f">When can someone come in?</p>
+      <div class="days" id="newDays"></div>
+      <div class="seg" id="newSlot"></div>
+      <p class="sub" style="font-size:13px">Your landlord approves the time or suggests another.</p>
+    </div>
+    <p id="sendErr" class="err" hidden></p>
+    <button class="primary" id="send">Send to landlord</button>
+  </section>
+
+  <!-- Landlord: tickets -->
+  <section id="lHome" class="stack" style="gap:18px" hidden>
+    <div>
+      <p class="sub" id="lUnitsLine"></p>
+      <h1 id="lTitle">Tickets</h1>
+    </div>
+    <div class="seg two" id="lNav1"></div>
+    <div class="utabs" id="unitTabs" role="group" aria-label="Choose a unit"></div>
+    <div id="unitHead"></div>
+    <div id="pendBanner"></div>
+    <div class="stats">
+      <div class="stat"><b id="cOpen" style="color:var(--open)">0</b><span>Open</span></div>
+      <div class="stat"><b id="cProg" style="color:var(--prog)">0</b><span>In progress</span></div>
+      <div class="stat"><b id="cDone" style="color:var(--done)">0</b><span>Done</span></div>
+    </div>
+    <div class="stack" id="unitExtra" hidden></div>
+    <div class="seg" id="filter"></div>
+    <div class="stack" id="landlordList"></div>
+  </section>
+
+  <!-- Landlord: calendar -->
+  <section id="lCal" class="stack" style="gap:18px" hidden>
+    <div>
+      <p class="sub" id="lUnitsLine2"></p>
+      <h1>Calendar</h1>
+    </div>
+    <div class="seg two" id="lNav2"></div>
+    <div class="stack" id="approvals"></div>
+    <div class="month">
+      <button class="nav" data-act="month" data-val="-1" aria-label="Previous month"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2 id="monthName"></h2>
+      <button class="nav" data-act="month" data-val="1" aria-label="Next month"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+    <div class="cal" id="calGrid"></div>
+    <div class="legend"><span><i class="dot d-wait"></i>Waiting for approval</span><span><i class="dot d-ok"></i>Confirmed</span></div>
+    <p class="label" id="dayLabel"></p>
+    <div class="stack" id="dayList"></div>
+  </section>
+
+  <!-- Landlord: ticket detail -->
+  <section id="lDetail" class="stack" style="gap:16px" hidden>
+    <button class="back" data-act="back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      <span id="backLabel">Tickets</span>
+    </button>
+    <div class="stack" style="gap:6px">
+      <div class="row" style="justify-content:flex-start"><span class="label" id="dWhere"></span><span id="dUrg"></span></div>
+      <h1 id="dTitle" style="font-size:24px"></h1>
+      <p class="sub" id="dWhen"></p>
+    </div>
+    <p id="dNote" style="font-size:15px;line-height:1.45;color:var(--soft)"></p>
+    <div class="stack" id="dMedia" style="gap:8px"></div>
+    <div class="stack" style="gap:8px">
+      <p class="f">Status</p>
+      <div class="seg" id="dStatus"></div>
+    </div>
+    <div class="card" id="dTech"></div>
+    <div class="card" id="dVisit"></div>
+    <div class="card" style="gap:12px">
+      <div class="row" style="justify-content:flex-start">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>
+        <h2>Find tools and parts</h2>
+      </div>
+      <label for="query" class="sub" style="font-size:13px">Suggested search (edit if you like)</label>
+      <input id="query" type="text">
+      <div class="shops">
+        <a id="qGoogle" target="_blank" rel="noopener">Google</a>
+        <a id="qHD" target="_blank" rel="noopener">Home Depot</a>
+        <a id="qLowes" target="_blank" rel="noopener">Lowe's</a>
+      </div>
+      <a class="videos" id="qYT" target="_blank" rel="noopener">How-to videos</a>
+    </div>
+    <div id="dDelete"></div>
+  </section>
+</div>
+
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photo or video">
+  <div class="vtop"><span id="vLabel"></span><button class="vclose" id="vClose" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="vbody" id="vBody"></div>
+  <div class="vfoot" id="vFoot"></div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

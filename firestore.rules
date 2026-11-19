@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Who is who. Keep these IDs in sync with config.js ----
+    function landlordUid() { return "YDnotZgOyhUrCRk6kjU6YsJoHOE3"; }
+    function unitMap() {
+      return {
+        "0P2nLXFGFhb47YHRCX3VTiGQ6Gj1": "Unit 1",
+        "dErM3Hr4pzXfCZLRGZ7rSmOxb132": "Unit 2",
+        "8sG9ReOArjM05fKht786ANPaXXr1": "Unit 3",
+        "NgtyonXT2of5cfX9Optxkpyoplv2": "Unit 4"
+      };
+    }
+
+    function signedIn() { return request.auth != null; }
+    function isLandlord() { return signedIn() && request.auth.uid == landlordUid(); }
+    function myUnit() { return unitMap().get(request.auth.uid, "none"); }
+    function isTenantOf(unit) { return signedIn() && myUnit() != "none" && unit == myUnit(); }
+
+    // Tickets: tenants see and create their own unit's; landlord sees all.
+    match /tickets/{id} {
+      allow read: if isLandlord() || isTenantOf(resource.data.unit);
+      allow create: if isLandlord() || (
+        isTenantOf(request.resource.data.unit)
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == "Open"
+        && request.resource.data.tech == null
+      );
+      // Tenants may only change the visit time (request, accept).
+      allow update: if isLandlord() || (
+        isTenantOf(resource.data.unit)
+        && request.resource.data.unit == resource.data.unit
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["appt", "updatedAt"])
+      );
+      allow delete: if isLandlord();
+    }
+
+    // Photo and video records, and the pieces of each file.
+    match /media/{id} {
+      allow read: if isLandlord() || isTenantOf(resource.data.unit);
+      allow create: if isLandlord() || (isTenantOf(request.resource.data.unit) && request.resource.data.by == request.auth.uid);
+      allow delete: if isLandlord();
+    }
+    match /chunks/{id} {
+      allow read: if isLandlord() || isTenantOf(resource.data.unit);
+      allow create: if isLandlord() || (isTenantOf(request.resource.data.unit) && request.resource.data.by == request.auth.uid);
+      allow delete: if isLandlord();
+    }
+
+    // The landlord's list of technicians.
+    match /techs/{id} {
+      allow read, write: if isLandlord();
+    }
+  }
+}
